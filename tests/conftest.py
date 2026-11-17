@@ -32,9 +32,11 @@ def client():
             db.close()
 
     app.dependency_overrides[get_db] = override_get_db
+    # Do not enter TestClient as a context manager here: that would run the
+    # application lifespan and create the real development database in tests.
+    test_client = TestClient(app)
     try:
-        with TestClient(app) as test_client:
-            yield test_client
+        yield test_client
     finally:
         app.dependency_overrides.clear()
         Base.metadata.drop_all(bind=test_engine)
