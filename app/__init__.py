@@ -1,0 +1,1 @@
+"""VAPTForceAI application package."""
