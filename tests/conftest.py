@@ -6,10 +6,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
+import app.models  # noqa: F401 - register models with SQLAlchemy metadata
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
-import app.models  # noqa: F401 - register models with SQLAlchemy metadata
 
 
 @pytest.fixture()
@@ -32,8 +32,8 @@ def client():
             db.close()
 
     app.dependency_overrides[get_db] = override_get_db
-    # Do not enter TestClient as a context manager here: that would run the
-    # application lifespan and create the real development database in tests.
+    # Avoid entering TestClient as a context manager: the app lifespan would
+    # create the real development database while tests use an isolated engine.
     test_client = TestClient(app)
     try:
         yield test_client
