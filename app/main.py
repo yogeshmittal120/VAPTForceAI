@@ -1,15 +1,15 @@
 """FastAPI application entry point."""
 
-from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+import app.models  # noqa: F401 - register models with SQLAlchemy metadata
 from app.api.routes import assessments, health
 from app.core.config import settings
 from app.db.base import Base
 from app.db.session import engine
-import app.models  # noqa: F401 - register models with SQLAlchemy metadata
 
 
 @asynccontextmanager
