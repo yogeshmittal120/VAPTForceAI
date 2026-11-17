@@ -9,7 +9,7 @@ from sqlalchemy.pool import StaticPool
 import app.models  # noqa: F401 - register models with SQLAlchemy metadata
 from app.db.base import Base
 from app.db.session import get_db
-from app.main import app
+from app.main import app as fastapi_app
 
 
 @pytest.fixture()
@@ -31,13 +31,13 @@ def client():
         finally:
             db.close()
 
-    app.dependency_overrides[get_db] = override_get_db
+    fastapi_app.dependency_overrides[get_db] = override_get_db
     # Avoid entering TestClient as a context manager: the app lifespan would
     # create the real development database while tests use an isolated engine.
-    test_client = TestClient(app)
+    test_client = TestClient(fastapi_app)
     try:
         yield test_client
     finally:
-        app.dependency_overrides.clear()
+        fastapi_app.dependency_overrides.clear()
         Base.metadata.drop_all(bind=test_engine)
         test_engine.dispose()
