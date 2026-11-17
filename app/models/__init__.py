@@ -1,0 +1,5 @@
+"""SQLAlchemy models."""
+
+from app.models.assessment import Assessment
+
+__all__ = ["Assessment"]
